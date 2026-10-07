@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daewoong Recruitment Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --daewoong-orange: #D96B27;          
+      --daewoong-orange-hover: #B85418;    
+      --daewoong-orange-light: #FDF5EF;    
+      --daewoong-orange-border: #F3D2C1;   
+      --bg-gray: #F8F9FA;
+      --text-dark: #2D3748;
+      --text-muted: #718096;
+      --border-color: #E2E8F0;
+      --shadow-md: 0 10px 25px -5px rgba(217, 107, 39, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+
+    * { box-sizing: border-box; font-family: 'Poppins', 'Noto Sans KR', sans-serif; }
+    body { background-color: var(--bg-gray); color: var(--text-dark); margin: 0; padding: 0; min-height: 100vh; }
+
+    .navbar {
+      background: linear-gradient(135deg, var(--daewoong-orange) 0%, #E88343 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(217, 107, 39, 0.15);
+    }
+    .brand-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .brand-badge { background: rgba(255, 255, 255, 0.2); padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .user-badge { font-size: 13px; font-weight: 500; background: rgba(0, 0, 0, 0.12); padding: 6px 14px; border-radius: 20px; }
+    .btn-logout { background: #FFFFFF; color: var(--daewoong-orange); border: none; padding: 6px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-logout:hover { background: var(--daewoong-orange-light); }
+
+    .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+    .card { background: white; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: var(--shadow-md); padding: 32px; }
+    .hidden { display: none !important; }
+
+    .login-wrapper { max-width: 650px; margin: 50px auto; text-align: center; }
+    .login-header h1 { color: var(--daewoong-orange); font-size: 32px; margin: 0 0 6px 0; font-weight: 700; }
+    .login-header p { color: var(--text-muted); font-size: 14px; margin: 0 0 30px 0; }
+
+    .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .role-card {
+      background: #FFFFFF;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 22px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      text-align: center;
+    }
+    .role-card:hover { border-color: var(--daewoong-orange-border); transform: translateY(-2px); }
+    .role-card.active { border-color: var(--daewoong-orange); background-color: var(--daewoong-orange-light); }
+    .role-icon { font-size: 34px; margin-bottom: 8px; display: block; }
+    .role-title { font-weight: 700; font-size: 15px; color: var(--text-dark); margin-bottom: 4px; }
+    .role-desc { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-dark); }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #CBD5E0; border-radius: 8px; font-size: 13px; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--daewoong-orange); }
+
+    .btn-orange { background: var(--daewoong-orange); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; width: 100%; transition: 0.2s; }
+    .btn-orange:hover { background: var(--daewoong-orange-hover); }
+    .btn-export { background: #2E7D32; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
+
+    .section-title { color: var(--daewoong-orange); border-bottom: 2px solid var(--daewoong-orange-light); padding-bottom: 8px; margin-top: 0; margin-bottom: 20px; font-size: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .full-width { grid-column: span 2; }
+
+    .dash-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; }
+    .candidate-card { background: white; border: 1px solid var(--border-color); border-left: 4px solid var(--daewoong-orange); padding: 12px 14px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+    .candidate-card:hover { background: var(--daewoong-orange-light); }
+    
+    .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+    .badge-pass { background: #E6F4EA; color: #137333; }
+    .badge-fail { background: #FCE8E6; color: #C5221F; }
+    .badge-hold { background: var(--daewoong-orange-light); color: var(--daewoong-orange); }
+
+    .link-btn { display: inline-flex; align-items: center; padding: 6px 12px; background: var(--daewoong-orange-light); color: var(--daewoong-orange); font-weight: 600; text-decoration: none; border-radius: 6px; font-size: 12px; margin-right: 6px; border: 1px solid var(--daewoong-orange-border); }
+    
+    .stage-box { background: #F8F9FA; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; }
+    .stage-box h5 { margin: 0 0 10px 0; color: var(--daewoong-orange); font-size: 14px; }
+    .filter-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <div id="appHeader" class="navbar hidden">
+    <div class="brand-title">
+      🍊 DAEWOONG <span class="brand-badge">Global Recruitment Portal</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span id="userInfo" class="user-badge"></span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- 1. LOGIN GATEWAY -->
+    <div id="loginSection" class="card login-wrapper">
+      <div class="login-header">
+        <h1>DAEWOONG</h1>
+        <p>Global Talent Recruitment System</p>
+      </div>
+
+      <div class="role-grid">
+        <div class="role-card active" id="cardPelamar" onclick="selectRole('Pelamar')">
+          <span class="role-icon">🍊</span>
+          <div class="role-title">Applicant</div>
+          <div class="role-desc">Submission Form</div>
+        </div>
+
+        <div class="role-card" id="cardEvaluator" onclick="selectRole('Evaluator')">
+          <span class="role-icon">📋</span>
+          <div class="role-title">Evaluator</div>
+          <div class="role-desc">Video & Interview</div>
+        </div>
+
+        <div class="role-card" id="cardAdmin" onclick="selectRole('Admin')">
+          <span class="role-icon">⚙️</span>
+          <div class="role-title">Admin</div>
+          <div class="role-desc">Full System Control</div>
+        </div>
+      </div>
+
+      <div id="credentialsGroup" class="hidden">
+        <div class="form-group">
+          <label>Evaluator Name / Username</label>
+          <input type="text" id="loginUsername" placeholder="e.g., 유지민">
+        </div>
+        <div class="form-group">
+          <label>Password / PIN</label>
+          <input type="password" id="loginPassword" placeholder="Enter Password">
+        </div>
+      </div>
+
+      <button class="btn-orange" onclick="handleLogin()">Enter Portal</button>
+      <div id="loginMsg" style="color: #C5221F; font-size: 13px; margin-top: 12px; font-weight: 500;"></div>
+    </div>
+
+    <!-- 2. APPLICANT FORM -->
+    <div id="pelamarSection" class="card hidden">
+      <h2 class="section-title">Global Recruitment Application Form</h2>
+      <form id="applicantForm" onsubmit="submitApplication(event)">
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name *</label><input type="text" id="pNama" required placeholder="As shown on Passport / ID"></div>
+          <div class="form-group"><label>Email Address *</label><input type="email" id="pEmail" required placeholder="name@email.com"></div>
+          <div class="form-group">
+            <label>Position Category *</label>
+            <select id="pCategory" required>
+              <option value="Quality A">Quality A</option>
+              <option value="Quality B">Quality B</option>
+              <option value="Research">Research</option>
+              <option value="Production">Production</option>
+              <option value="Engineering">Engineering</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Phone Number / WhatsApp *</label><input type="tel" id="pPhone" required placeholder="+82 10-XXXX-XXXX / +62 8XX..."></div>
+          <div class="form-group"><label>Date of Birth *</label><input type="date" id="pBirthday" required></div>
+          <div class="form-group"><label>University Region / Status *</label><input type="text" id="pUniversity" required placeholder="e.g., TOP 5 / Overseas"></div>
+          <div class="form-group"><label>University Name *</label><input type="text" id="pSchoolName" required placeholder="e.g., ITB / UI / Universitas Gadjah Mada"></div>
+          
+          <div class="form-group">
+            <label>Degree Level *</label>
+            <select id="pDegree" required>
+              <option value="" disabled selected>Select Degree Level</option>
+              <option value="Bachelor">Bachelor</option>
+              <option value="Master">Master</option>
+              <option value="PhD">PhD</option>
+              <option value="Integrated">Integrated</option>
+            </select>
+          </div>
+
+          <div class="form-group"><label>Pharmacy License *</label><input type="text" id="pPharmacy" required placeholder="Yes / No"></div>
+          <div class="form-group"><label>Major *</label><input type="text" id="pMajor" required placeholder="e.g., Pharmacy / Chemical Engineering"></div>
+          <div class="form-group"><label>Nationality *</label><input type="text" id="pNationality" required placeholder="e.g., Indonesia"></div>
+          <div class="form-group"><label>English Proficiency *</label><input type="text" id="pEnglish" required placeholder="e.g., Fluent / Intermediate"></div>
+          <div class="form-group"><label>Korean Proficiency *</label><input type="text" id="pKorean" required placeholder="e.g., TOPIK Level 3 / Basic"></div>
+          <div class="form-group"><label>Experience Status *</label><input type="text" id="pExpStatus" required placeholder="Fresh Graduate / Experienced"></div>
+          <div class="form-group"><label>Total Work Experience *</label><input type="text" id="pWorkExp" required placeholder="e.g., Fresh Graduate / 1 Year"></div>
+          <div class="form-group"><label>Religion</label><input type="text" id="pReligion" placeholder="Optional"></div>
+          <div class="form-group"><label>IT / Software Skills</label><input type="text" id="pITExp" placeholder="Optional"></div>
+          <div class="form-group full-width"><label>Full Address *</label><textarea id="pAddress" rows="2" required placeholder="Current residential address"></textarea></div>
+          <div class="form-group"><label>CV Link (Google Drive / Dropbox) *</label><input type="url" id="pCvUrl" required placeholder="https://drive.google.com/..."></div>
+          <div class="form-group"><label>Application Form Link *</label><input type="url" id="pAppFormUrl" required placeholder="https://drive.google.com/..."></div>
+          <div class="form-group full-width"><label>Self-Introduction Video Link *</label><input type="url" id="pVideoUrl" required placeholder="https://drive.google.com/..."></div>
+        </div>
+        <button class="btn-orange" type="submit" style="margin-top: 15px;">Submit Application</button>
+      </form>
+    </div>
+
+    <!-- 3. EVALUATOR & ADMIN DASHBOARD -->
+    <div id="evaluatorSection" class="card hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin:0; color: var(--daewoong-orange);">Recruitment Pipeline Dashboard</h3>
+        <button class="btn-export" onclick="exportToCSV()">📊 Export Data (CSV)</button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="searchName" placeholder="Search Candidate / Univ..." onkeyup="filterCandidates()">
+        <select id="filterCategory" onchange="filterCandidates()">
+          <option value="">All Categories</option>
+          <option value="Quality A">Quality A</option>
+          <option value="Quality B">Quality B</option>
+          <option value="Research">Research</option>
+          <option value="Production">Production</option>
+          <option value="Engineering">Engineering</option>
+        </select>
+        <select id="filterDegree" onchange="filterCandidates()">
+          <option value="">All Degrees</option>
+          <option value="Bachelor">Bachelor</option>
+          <option value="Master">Master</option>
+          <option value="PhD">PhD</option>
+          <option value="Integrated">Integrated</option>
+        </select>
+      </div>
+
+      <div class="dash-grid">
+        <div style="border-right: 1px solid var(--border-color); padding-right: 15px;">
+          <div id="candidateList" style="max-height: 65vh; overflow-y: auto;">Loading candidates...</div>
+        </div>
+        
+        <div id="detailPanel">
+          <p style="color: var(--text-muted); text-align: center; margin-top: 80px;">Select a candidate from the left list to review and update evaluation results.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let selectedRole = 'Pelamar';
+    let currentUser = null;
+    let allCandidates = [];
+    let selectedCandidate = null;
+
+    function selectRole(role) {
+      selectedRole = role;
+      document.getElementById('cardPelamar').classList.remove('active');
+      document.getElementById('cardEvaluator').classList.remove('active');
+      document.getElementById('cardAdmin').classList.remove('active');
+
+      document.getElementById('card' + role).classList.add('active');
+
+      const group = document.getElementById('credentialsGroup');
+      if (role === 'Pelamar') {
+        group.classList.add('hidden');
+      } else {
+        group.classList.remove('hidden');
+      }
+      document.getElementById('loginMsg').innerText = "";
+    }
+
+    function handleLogin() {
+      const u = document.getElementById('loginUsername').value;
+      const p = document.getElementById('loginPassword').value;
+
+      document.getElementById('loginMsg').innerText = "Verifying credentials...";
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.success) {
+            currentUser = { 
+              role: res.role, 
+              username: res.username,
+              assignedCategories: res.assignedCategories
+            };
+            showDashboard(res.role);
+          } else {
+            document.getElementById('loginMsg').innerText = res.message;
+          }
+        })
+        .authenticateUser(u, p, selectedRole);
+    }
+
+    function showDashboard(role) {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('appHeader').classList.remove('hidden');
+      document.getElementById('userInfo').innerText = currentUser.username + " (" + role + ")";
+
+      if (role === 'Pelamar') {
+        document.getElementById('pelamarSection').classList.remove('hidden');
+      } else {
+        document.getElementById('evaluatorSection').classList.remove('hidden');
+        loadCandidates();
+      }
+    }
+
+    function logout() {
+      location.reload();
+    }
+
+    function submitApplication(e) {
+      e.preventDefault();
+      const payload = {
+        nama: document.getElementById('pNama').value,
+        email: document.getElementById('pEmail').value,
+        category: document.getElementById('pCategory').value,
+        phone: document.getElementById('pPhone').value,
+        birthday: document.getElementById('pBirthday').value,
+        university: document.getElementById('pUniversity').value,
+        schoolName: document.getElementById('pSchoolName').value,
+        degree: document.getElementById('pDegree').value,
+        pharmacyLicense: document.getElementById('pPharmacy').value,
+        major: document.getElementById('pMajor').value,
+        nationality: document.getElementById('pNationality').value,
+        englishProficiency: document.getElementById('pEnglish').value,
+        koreanProficiency: document.getElementById('pKorean').value,
+        experienceStatus: document.getElementById('pExpStatus').value,
+        workExperience: document.getElementById('pWorkExp').value,
+        religion: document.getElementById('pReligion').value,
+        address: document.getElementById('pAddress').value,
+        itExperience: document.getElementById('pITExp').value,
+        cvUrl: document.getElementById('pCvUrl').value,
+        appFormUrl: document.getElementById('pAppFormUrl').value,
+        videoUrl: document.getElementById('pVideoUrl').value
+      };
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.success) {
+            alert("Application submitted successfully! Candidate ID: " + res.candidateId);
+            document.getElementById('applicantForm').reset();
+          } else {
+            alert("Submission failed: " + res.message);
+          }
+        })
+        .processApplication(payload);
+    }
+
+    function loadCandidates() {
+      google.script.run
+        .withSuccessHandler(data => {
+          allCandidates = data || [];
+          renderList(allCandidates);
+        })
+        .getCandidatesData(
+          currentUser ? currentUser.username : '', 
+          currentUser ? currentUser.role : '',
+          currentUser ? currentUser.assignedCategories : ''
+        );
+    }
+
+    function renderList(listData) {
+      const listContainer = document.getElementById('candidateList');
+      listContainer.innerHTML = '';
+      if (!listData || listData.length === 0) {
+        listContainer.innerHTML = '<p style="font-size:13px; color:#666;">No candidates found for your assigned division.</p>';
+        return;
+      }
+
+      listData.forEach((c, idx) => {
+        const item = document.createElement('div');
+        item.className = 'candidate-card';
+        item.onclick = () => selectCandidate(idx);
+
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h5 style="margin:0; font-size:14px;">${c.nama}</h5>
+            <span class="badge ${c.finalResult === 'Pass' ? 'badge-pass' : (c.finalResult === 'Fail' ? 'badge-fail' : 'badge-hold')}">${c.finalResult}</span>
+          </div>
+          <p style="margin:4px 0 0 0; font-size:11px; color:#666;">${c.category} | ${c.schoolName} (${c.degree})</p>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    function filterCandidates() {
+      const q = document.getElementById('searchName').value.toLowerCase();
+      const cat = document.getElementById('filterCategory').value;
+      const deg = document.getElementById('filterDegree').value;
+
+      const filtered = allCandidates.filter(c => {
+        const matchesQuery = (c.nama + ' ' + c.schoolName + ' ' + c.nationality).toLowerCase().includes(q);
+        const matchesCategory = cat === '' || c.category === cat;
+        const matchesDegree = deg === '' || c.degree === deg;
+        return matchesQuery && matchesCategory && matchesDegree;
+      });
+
+      renderList(filtered);
+    }
+
+    function selectCandidate(idx) {
+      selectedCandidate = allCandidates[idx];
+      const c = selectedCandidate;
+      const panel = document.getElementById('detailPanel');
+      const isAdmin = currentUser.role === 'Admin';
+
+      google.script.run.withSuccessHandler(history => {
+        let historyHtml = '<p style="font-size:11px; color:#777;">No evaluation history submitted yet.</p>';
+        if (history && history.length > 0) {
+          historyHtml = history.map(h => `
+            <div style="background:white; padding:8px 10px; border-radius:6px; border:1px solid #E2E8F0; margin-bottom:6px; font-size:11px;">
+              <strong>${h.evaluator}</strong> [${h.stage}] ➔ <span style="font-weight:bold; color:${h.decision === 'Pass' ? 'green' : 'red'}">${h.decision}</span>
+              <br><em>"${h.notes || '-'}"</em> <span style="color:#aaa; font-size:9px;">(${h.timestamp})</span>
+            </div>
+          `).join('');
+        }
+
+        panel.innerHTML = `
+          <h3 style="margin-top:0; color:var(--daewoong-orange);">${c.nama} <small style="font-size:13px; color:#666;">(${c.candidateId})</small></h3>
+          <p style="font-size:12px; color:#555;"><strong>Email:</strong> ${c.email} | <strong>Phone:</strong> ${c.phone} | <strong>Category:</strong> ${c.category}</p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#F8F9FA; padding:12px; border-radius:8px; border:1px solid #E2E8F0; font-size:12px; margin-bottom:14px;">
+            <div><strong>University:</strong> ${c.schoolName} (${c.degree})</div>
+            <div><strong>Major:</strong> ${c.major}</div>
+            <div><strong>Pharmacy License:</strong> ${c.pharmacyLicense}</div>
+            <div><strong>Korean Skill:</strong> ${c.koreanProficiency}</div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            ${c.cvUrl ? `<a href="${c.cvUrl}" target="_blank" class="link-btn">📄 View CV</a>` : ''}
+            ${c.appFormUrl ? `<a href="${c.appFormUrl}" target="_blank" class="link-btn">📑 View App Form</a>` : ''}
+            ${c.videoUrl ? `<a href="${c.videoUrl}" target="_blank" class="link-btn" style="background:#FCE8E6; color:#C5221F;">🎬 Watch Video</a>` : ''}
+          </div>
+
+          <!-- STAGE 1 & STAGE 2 (ADMIN ONLY) -->
+          ${isAdmin ? `
+            <div class="stage-box">
+              <h5>Stage 1: Document Screening</h5>
+              <select id="stageDoc">
+                <option value="Pending" ${c.docScreening === 'Pending' ? 'selected' : ''}>Pending</option>
+                <option value="Pass" ${c.docScreening === 'Pass' ? 'selected' : ''}>Pass</option>
+                <option value="Fail" ${c.docScreening === 'Fail' ? 'selected' : ''}>Fail</option>
+              </select>
+            </div>
+            <div class="stage-box">
+              <h5>Stage 2: Aptitude Test (PI/PLI)</h5>
+              <select id="stageApt">
+                <option value="Pending" ${c.aptitudeTest === 'Pending' ? 'selected' : ''}>Pending</option>
+                <option value="Pass" ${c.aptitudeTest === 'Pass' ? 'selected' : ''}>Pass</option>
+                <option value="Fail" ${c.aptitudeTest === 'Fail' ? 'selected' : ''}>Fail</option>
+              </select>
+            </div>
+          ` : ''}
+
+          <!-- SUBMIT EVALUATOR SCORE BOX (STAGE 3 & 4) -->
+          <div class="stage-box" style="background:#FDF5EF; border-color:#F3D2C1;">
+            <h5 style="margin-top:0;">Submit Evaluation (${currentUser.username})</h5>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+              <div>
+                <label style="font-size:11px; font-weight:bold;">Target Stage</label>
+                <select id="evalStage">
+                  <option value="Video Evaluation">Stage 3: Video Evaluation</option>
+                  <option value="Interview Evaluation">Stage 4: Interview Evaluation</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11px; font-weight:bold;">Decision</label>
+                <select id="evalDecision">
+                  <option value="Pass">Pass</option>
+                  <option value="Fail">Fail</option>
+                  <option value="Hold">Hold / Review</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <textarea id="evalNotesText" rows="2" placeholder="Write detailed feedback..."></textarea>
+            </div>
+            <button class="btn-orange" onclick="submitSingleEval()" style="margin-top:8px;">Submit Evaluation Score</button>
+          </div>
+
+          <!-- STAGE 5: FINAL RESULT (ADMIN ONLY) -->
+          ${isAdmin ? `
+            <div class="stage-box" style="background:#E6F4EA; border-color:#CEEAD6;">
+              <h5 style="margin-bottom:6px; color:#137333;">Stage 5: Final Hiring Decision (Admin)</h5>
+              <select id="stageFinal" style="font-weight:bold;">
+                <option value="Pending" ${c.finalResult === 'Pending' ? 'selected' : ''}>Pending</option>
+                <option value="Pass" ${c.finalResult === 'Pass' ? 'selected' : ''}>Pass (Hired)</option>
+                <option value="Fail" ${c.finalResult === 'Fail' ? 'selected' : ''}>Fail</option>
+              </select>
+              <button class="btn-orange" onclick="saveAdminChanges()" style="margin-top:10px; background:#137333;">Save Final Hiring Decision</button>
+            </div>
+          ` : ''}
+
+          <!-- EVALUATION HISTORY PANEL -->
+          <div style="background:#F8F9FA; padding:12px; border-radius:8px; border:1px solid #E2E8F0; margin-top:14px;">
+            <h5 style="margin-top:0; color:#2D3748;">Multi-Evaluator Scoring History</h5>
+            ${historyHtml}
+          </div>
+        `;
+      }).getCandidateEvaluationHistory(c.candidateId);
+    }
+
+    function submitSingleEval() {
+      if (!selectedCandidate) return;
+      const payload = {
+        rowIndex: selectedCandidate.rowIndex,
+        candidateId: selectedCandidate.candidateId,
+        evaluatorUsername: currentUser.username,
+        stage: document.getElementById('evalStage').value,
+        decision: document.getElementById('evalDecision').value,
+        notes: document.getElementById('evalNotesText').value
+      };
+
+      google.script.run.withSuccessHandler(res => {
+        if (res.success) {
+          alert("Evaluation score submitted!");
+          selectCandidate(allCandidates.findIndex(item => item.candidateId === selectedCandidate.candidateId));
+          loadCandidates();
+        }
+      }).submitEvaluatorScore(payload);
+    }
+
+    function saveAdminChanges() {
+      if (!selectedCandidate) return;
+      const payload = {
+        rowIndex: selectedCandidate.rowIndex,
+        docScreening: document.getElementById('stageDoc').value,
+        aptitudeTest: document.getElementById('stageApt').value,
+        finalResult: document.getElementById('stageFinal').value
+      };
+
+      google.script.run.withSuccessHandler(res => {
+        if (res.success) {
+          alert("Admin stages updated successfully!");
+          loadCandidates();
+        }
+      }).updateEvaluationStage(payload);
+    }
+
+    function exportToCSV() {
+      if (!allCandidates || allCandidates.length === 0) {
+        alert("No candidate data available to export.");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "ID,Name,Email,Category,Phone,University,Degree,Major,Nationality,Doc Screening,Aptitude Test,Video Eval,Interview Eval,Final Result\n";
+
+      allCandidates.forEach(c => {
+        const row = [
+          `"${c.candidateId}"`,
+          `"${c.nama}"`,
+          `"${c.email}"`,
+          `"${c.category}"`,
+          `"${c.phone}"`,
+          `"${c.schoolName}"`,
+          `"${c.degree}"`,
+          `"${c.major}"`,
+          `"${c.nationality}"`,
+          `"${c.docScreening}"`,
+          `"${c.aptitudeTest}"`,
+          `"${c.videoEval}"`,
+          `"${c.interviewEval}"`,
+          `"${c.finalResult}"`
+        ];
+        csvContent += row.join(",") + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Daewoong_Recruitment_Candidates.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
